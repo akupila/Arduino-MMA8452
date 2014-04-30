@@ -128,6 +128,25 @@ void MMA8452::getPortaitLandscapeStatus(bool *orientationChanged, bool *zTiltLoc
 	*back = (reg >> 0) & 0x1;
 }
 
+void MMA8452::configureLandscapePortraitDetection(bool enableDetection, uint8_t debounceCount, bool debounceTimeout)
+{
+	byte reg = read(REG_PL_CFG);
+	reg &= ~(1 << 7);
+	reg |= (debounceTimeout << 7);
+	reg |= (enableDetection << 6);
+	write(REG_PL_CFG, reg);
+
+	write(REG_PL_COUNT, debounceCount);
+}
+
+void MMA8452::getLandscapePortraitConfig(bool *enabled, uint8_t *debounceCount, bool *debounceTimeout)
+{
+	byte reg = read(REG_PL_CFG);
+	*debounceTimeout = (reg >> 7) & 0x1;
+	*enabled = (reg >> 6) & 0x1;
+	*debounceCount = read(REG_PL_COUNT);
+}
+
 // -- private --
 
 void MMA8452::setActive(bool active)

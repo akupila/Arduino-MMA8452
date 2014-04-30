@@ -63,6 +63,9 @@ class MMA8452
 
 		void getPortaitLandscapeStatus(bool *orientationChanged, bool *zTiltLockoutDetected, mma8452_orientation_t *orientation, bool *back);
 
+		void configureLandscapePortraitDetection(bool enableDetection, uint8_t debounceCount = 0, bool debounceTimeout = true);
+		void getLandscapePortraitConfig(bool *enabled, uint8_t *debounceCount, bool *debounceTimeout);
+
 		SoftwareSerial *debug;
 
 	private:
