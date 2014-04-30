@@ -147,6 +147,13 @@ void MMA8452::getLandscapePortraitConfig(bool *enabled, uint8_t *debounceCount, 
 	*debounceCount = read(REG_PL_COUNT);
 }
 
+void MMA8452::setMotionTreshold(uint8_t threshold, uint8_t debounceCount, bool resetDebounceOnNoMotion)
+{
+	if (threshold > 127) threshold = 127;
+	write(REG_FF_MT_THS, (resetDebounceOnNoMotion << 7) | threshold);
+	write(REG_FF_MT_COUNT, debounceCount);
+}
+
 // -- private --
 
 void MMA8452::setActive(bool active)

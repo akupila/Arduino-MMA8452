@@ -66,6 +66,9 @@ class MMA8452
 		void configureLandscapePortraitDetection(bool enableDetection, uint8_t debounceCount = 0, bool debounceTimeout = true);
 		void getLandscapePortraitConfig(bool *enabled, uint8_t *debounceCount, bool *debounceTimeout);
 
+		// threshold: 8G/127
+		void setMotionTreshold(uint8_t threshold, uint8_t debounceCount = 0, bool resetDebounceOnNoMotion = 0);
+
 		SoftwareSerial *debug;
 
 	private:
