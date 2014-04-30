@@ -37,6 +37,7 @@ class MMA8452
 		void getAcceleration(float *x, float *y, float *z);
 
 		mma8452_mode_t getMode();
+		void getInterruptEvent(bool &wakeStateChanged, bool &movementOccurred, bool &landscapePortrait, bool &pulseEvent, bool &freefall, bool &dataReady);
 
 		SoftwareSerial *debug;
 

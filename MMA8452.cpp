@@ -77,6 +77,17 @@ mma8452_mode_t MMA8452::getMode()
 	return (mma8452_mode_t)(sysmode & 0x3);
 }
 
+void MMA8452::getInterruptEvent(bool &wakeStateChanged, bool &movementOccurred, bool &landscapePortrait, bool &pulseEvent, bool &freefall, bool &dataReady)
+{
+	byte int_source = read(REG_INT_SOURCE);
+	*wakeStateChanged = (source >> 7) & 1;
+	*movementOccurred = (source >> 5) & 1;
+	*landscapePortrait = (source >> 4) & 1;
+	*pulseEvent = (source >> 3) & 1;
+	*freefall = (source >> 2) & 1;
+	*dataReady = (source >> 0) & 1;
+}
+
 // -- private --
 
 void MMA8452::setActive(bool active)
