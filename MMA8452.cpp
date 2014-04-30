@@ -71,6 +71,12 @@ float MMA8452::convertGCounts(uint16_t data)
 	return output;
 }
 
+mma8452_mode_t MMA8452::getMode()
+{
+	byte sysmode = read(REG_SYSMOD);
+	return (mma8452_mode_t)(sysmode & 0x3);
+}
+
 // -- private --
 
 void MMA8452::setActive(bool active)

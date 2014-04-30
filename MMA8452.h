@@ -21,6 +21,12 @@ typedef enum {
 	MMA_RANGE_8G
 } mma8452_range_t;
 
+typedef enum {
+	MMA_STANDBY = 0,
+	MMA_WAKE,
+	MMA_SLEEP
+} mma8452_mode_t;
+
 class MMA8452
 {
 
@@ -29,6 +35,8 @@ class MMA8452
 		void setRange(mma8452_range_t range);
 		void getRawData(uint16_t *x, uint16_t *y, uint16_t *z);
 		void getAcceleration(float *x, float *y, float *z);
+
+		mma8452_mode_t getMode();
 
 		SoftwareSerial *debug;
 
