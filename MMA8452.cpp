@@ -94,6 +94,20 @@ mma8452_range_t MMA8452::getRange()
 	return (mma8452_range_t)(reg & 0x3);
 }
 
+void MMA8452::setHighPassFilterEnabled(bool enabled)
+{
+	byte reg = read(REG_XYZ_DATA_CFG);
+	reg &= ~(1 << 4);
+	reg |= (enabled << 4);
+	write(REG_XYZ_DATA_CFG, reg);
+}
+
+bool MMA8452::getHighPassFilterEnabled()
+{
+	byte reg = read(REG_XYZ_DATA_CFG);
+	return (reg >> 4) & 1;
+}
+
 // -- private --
 
 void MMA8452::setActive(bool active)

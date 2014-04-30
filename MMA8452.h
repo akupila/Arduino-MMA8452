@@ -42,6 +42,9 @@ class MMA8452
 		mma8452_mode_t getMode();
 		void getInterruptEvent(bool *wakeStateChanged, bool *movementOccurred, bool *landscapePortrait, bool *pulseEvent, bool *freefall, bool *dataReady);
 
+		void setHighPassFilterEnabled(bool enabled);
+		bool getHighPassFilterEnabled();
+
 		SoftwareSerial *debug;
 
 	private:
