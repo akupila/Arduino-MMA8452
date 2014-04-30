@@ -27,12 +27,20 @@ typedef enum {
 	MMA_SLEEP
 } mma8452_mode_t;
 
+// See table on page 23 in datasheet (http://www.freescale.com/files/sensors/doc/data_sheet/MMA8452Q.pdf)
 typedef enum {
 	MMA_HP1 = 0,
 	MMA_HP2,
 	MMA_HP3,
 	MMA_HP4
 } mma8452_highpass_mode_t;
+
+typedef enum {
+	MMA_PORTRAIT_UP = 0,
+	MMA_PORTRAIT_DOWN,
+	MMA_LANDSCAPE_RIGHT,
+	MMA_LANDSCAPE_LEFT
+} mma8452_orientation_t;
 
 class MMA8452
 {
@@ -52,6 +60,8 @@ class MMA8452
 		// todo: implement Pulse_LPF_EN
 		void setHighPassFilter(bool enabled, mma8452_highpass_mode_t mode);
 		bool getHighPassFilter(mma8452_highpass_mode_t *mode = NULL);
+
+		void getPortaitLandscapeStatus(bool *orientationChanged, bool *zTiltLockoutDetected, mma8452_orientation_t *orientation, bool *back);
 
 		SoftwareSerial *debug;
 

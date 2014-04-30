@@ -69,12 +69,12 @@ mma8452_mode_t MMA8452::getMode()
 void MMA8452::getInterruptEvent(bool *wakeStateChanged, bool *movementOccurred, bool *landscapePortrait, bool *pulseEvent, bool *freefall, bool *dataReady)
 {
 	byte int_source = read(REG_INT_SOURCE);
-	*wakeStateChanged = (int_source >> 7) & 1;
-	*movementOccurred = (int_source >> 5) & 1;
-	*landscapePortrait = (int_source >> 4) & 1;
-	*pulseEvent = (int_source >> 3) & 1;
-	*freefall = (int_source >> 2) & 1;
-	*dataReady = (int_source >> 0) & 1;
+	*wakeStateChanged = (int_source >> 7) & 0x1;
+	*movementOccurred = (int_source >> 5) & 0x1;
+	*landscapePortrait = (int_source >> 4) & 0x1;
+	*pulseEvent = (int_source >> 3) & 0x1;
+	*freefall = (int_source >> 2) & 0x1;
+	*dataReady = (int_source >> 0) & 0x1;
 }
 
 void MMA8452::setRange(mma8452_range_t newRange)
@@ -117,6 +117,15 @@ bool MMA8452::getHighPassFilter(mma8452_highpass_mode_t *mode)
 		*mode = (mma8452_highpass_mode_t)(reg & 0x3);
 	}
 	return (reg >> 4) & 1;
+}
+
+void MMA8452::getPortaitLandscapeStatus(bool *orientationChanged, bool *zTiltLockoutDetected, mma8452_orientation_t *orientation, bool *back)
+{
+	byte reg = read(REG_PL_STATUS);
+	*orientationChanged = (reg >> 7) & 0x1;
+	*zTiltLockoutDetected = (reg >> 6) & 0x1;
+	*orientation = (mma8452_orientation_t)((reg >> 1) & 0x3);
+	*back = (reg >> 0) & 0x1;
 }
 
 // -- private --
