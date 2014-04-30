@@ -27,6 +27,13 @@ typedef enum {
 	MMA_SLEEP
 } mma8452_mode_t;
 
+typedef enum {
+	MMA_HP1 = 0,
+	MMA_HP2,
+	MMA_HP3,
+	MMA_HP4
+} mma8452_highpass_mode_t;
+
 class MMA8452
 {
 
@@ -42,8 +49,9 @@ class MMA8452
 		mma8452_mode_t getMode();
 		void getInterruptEvent(bool *wakeStateChanged, bool *movementOccurred, bool *landscapePortrait, bool *pulseEvent, bool *freefall, bool *dataReady);
 
-		void setHighPassFilterEnabled(bool enabled);
-		bool getHighPassFilterEnabled();
+		// todo: implement Pulse_LPF_EN
+		void setHighPassFilter(bool enabled, mma8452_highpass_mode_t mode);
+		bool getHighPassFilter(mma8452_highpass_mode_t *mode = NULL);
 
 		SoftwareSerial *debug;
 

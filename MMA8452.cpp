@@ -94,17 +94,28 @@ mma8452_range_t MMA8452::getRange()
 	return (mma8452_range_t)(reg & 0x3);
 }
 
-void MMA8452::setHighPassFilterEnabled(bool enabled)
+void MMA8452::setHighPassFilter(bool enabled, mma8452_highpass_mode_t mode)
 {
 	byte reg = read(REG_XYZ_DATA_CFG);
 	reg &= ~(1 << 4);
 	reg |= (enabled << 4);
 	write(REG_XYZ_DATA_CFG, reg);
+
+	reg = read(REG_HP_FILTER_CUTOFF);
+	reg &= ~(0x03);
+	reg |= mode;
+	write(REG_HP_FILTER_CUTOFF, reg);
+
 }
 
-bool MMA8452::getHighPassFilterEnabled()
+bool MMA8452::getHighPassFilter(mma8452_highpass_mode_t *mode)
 {
 	byte reg = read(REG_XYZ_DATA_CFG);
+	if (mode != NULL)
+	{
+		reg = read(REG_HP_FILTER_CUTOFF);
+		*mode = (mma8452_highpass_mode_t)(reg & 0x3);
+	}
 	return (reg >> 4) & 1;
 }
 
