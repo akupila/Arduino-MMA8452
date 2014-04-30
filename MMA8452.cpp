@@ -15,17 +15,6 @@ bool MMA8452::init()
 	return true;
 }
 
-void MMA8452::setRange(mma8452_range_t newRange)
-{
-	setActive(false);
-	byte reg = read(REG_XYZ_DATA_CFG);
-	reg &= ~0x3;
-	reg |= newRange;
-	write(REG_XYZ_DATA_CFG, reg);
-	setActive(true);
-	range = newRange;
-}
-
 void MMA8452::getRawData(uint16_t *x, uint16_t *y, uint16_t *z)
 {
 	// the x, y, z registers are consecutive so read them in one go
@@ -77,15 +66,32 @@ mma8452_mode_t MMA8452::getMode()
 	return (mma8452_mode_t)(sysmode & 0x3);
 }
 
-void MMA8452::getInterruptEvent(bool &wakeStateChanged, bool &movementOccurred, bool &landscapePortrait, bool &pulseEvent, bool &freefall, bool &dataReady)
+void MMA8452::getInterruptEvent(bool *wakeStateChanged, bool *movementOccurred, bool *landscapePortrait, bool *pulseEvent, bool *freefall, bool *dataReady)
 {
 	byte int_source = read(REG_INT_SOURCE);
-	*wakeStateChanged = (source >> 7) & 1;
-	*movementOccurred = (source >> 5) & 1;
-	*landscapePortrait = (source >> 4) & 1;
-	*pulseEvent = (source >> 3) & 1;
-	*freefall = (source >> 2) & 1;
-	*dataReady = (source >> 0) & 1;
+	*wakeStateChanged = (int_source >> 7) & 1;
+	*movementOccurred = (int_source >> 5) & 1;
+	*landscapePortrait = (int_source >> 4) & 1;
+	*pulseEvent = (int_source >> 3) & 1;
+	*freefall = (int_source >> 2) & 1;
+	*dataReady = (int_source >> 0) & 1;
+}
+
+void MMA8452::setRange(mma8452_range_t newRange)
+{
+	setActive(false);
+	byte reg = read(REG_XYZ_DATA_CFG);
+	reg &= ~0x3;
+	reg |= newRange;
+	write(REG_XYZ_DATA_CFG, reg);
+	setActive(true);
+	range = newRange;
+}
+
+mma8452_range_t MMA8452::getRange()
+{
+	byte reg = read(REG_XYZ_DATA_CFG);
+	return (mma8452_range_t)(reg & 0x3);
 }
 
 // -- private --

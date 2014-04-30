@@ -32,12 +32,15 @@ class MMA8452
 
 	public:
 		bool init();
+
 		void setRange(mma8452_range_t range);
+		mma8452_range_t getRange();
+
 		void getRawData(uint16_t *x, uint16_t *y, uint16_t *z);
 		void getAcceleration(float *x, float *y, float *z);
 
 		mma8452_mode_t getMode();
-		void getInterruptEvent(bool &wakeStateChanged, bool &movementOccurred, bool &landscapePortrait, bool &pulseEvent, bool &freefall, bool &dataReady);
+		void getInterruptEvent(bool *wakeStateChanged, bool *movementOccurred, bool *landscapePortrait, bool *pulseEvent, bool *freefall, bool *dataReady);
 
 		SoftwareSerial *debug;
 
