@@ -147,11 +147,46 @@ void MMA8452::getLandscapePortraitConfig(bool *enabled, uint8_t *debounceCount, 
 	*debounceCount = read(REG_PL_COUNT);
 }
 
+void MMA8452::setMotionDetectionMode(mma8452_motion_type_t motion, bool xAxis, bool yAxis, bool zAxis, bool latchMotion)
+{
+	byte reg =  (latchMotion << 7) |
+				(motion << 6) |
+				(zAxis << 5) |
+				(yAxis << 4) |
+				(xAxis << 3);
+	write(REG_FF_MT_CFG, reg);
+}
+
 void MMA8452::setMotionTreshold(uint8_t threshold, uint8_t debounceCount, bool resetDebounceOnNoMotion)
 {
 	if (threshold > 127) threshold = 127;
 	write(REG_FF_MT_THS, (resetDebounceOnNoMotion << 7) | threshold);
 	write(REG_FF_MT_COUNT, debounceCount);
+}
+
+bool MMA8452::motionDetected(bool *x, bool *y, bool *z, bool *negativeX, bool *negativeY, bool *negativeZ)
+{
+	byte ff_mt_src = read(REG_FF_MT_SRC);
+	bool motionDetected = (ff_mt_src >> 7) & 0x1;
+	*z = (ff_mt_src >> 5) & 0x1;
+	*y = (ff_mt_src >> 3) & 0x1;
+	*x = (ff_mt_src >> 1) & 0x1;
+	if (negativeZ) *negativeZ = (ff_mt_src >> 4) & 0x1;
+	if (negativeY) *negativeY = (ff_mt_src >> 2) & 0x1;
+	if (negativeX) *negativeX = (ff_mt_src >> 0) & 0x1;
+
+	return motionDetected;
+}
+
+void MMA8452::setTransientDetection(bool xAxis, bool yAxis, bool zAxis, bool latchMotion, bool bypassHighPass)
+{
+	byte reg =  (latchMotion << 4) |
+				(zAxis << 3) |
+				(yAxis << 2) |
+				(xAxis << 1) |
+				bypassHighPass;
+
+	write(REG_TRANSIENT_CFG, reg);
 }
 
 // -- private --

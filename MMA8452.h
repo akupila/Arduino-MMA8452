@@ -42,6 +42,11 @@ typedef enum {
 	MMA_LANDSCAPE_LEFT
 } mma8452_orientation_t;
 
+typedef enum {
+	MMA_FREEFALL = 0,
+	MMA_MOTION
+} mma8452_motion_type_t;
+
 class MMA8452
 {
 
@@ -66,8 +71,13 @@ class MMA8452
 		void configureLandscapePortraitDetection(bool enableDetection, uint8_t debounceCount = 0, bool debounceTimeout = true);
 		void getLandscapePortraitConfig(bool *enabled, uint8_t *debounceCount, bool *debounceTimeout);
 
+		void setMotionDetectionMode(mma8452_motion_type_t motion, bool xAxis, bool yAxis, bool zAxis, bool latchMotion = false);
 		// threshold: 8G/127
 		void setMotionTreshold(uint8_t threshold, uint8_t debounceCount = 0, bool resetDebounceOnNoMotion = 0);
+		bool motionDetected(bool *x, bool *y, bool *z, bool *negativeX = NULL, bool *negativeY = NULL, bool *negativeZ = NULL);
+
+		void setTransientDetection(bool xAxis, bool yAxis, bool zAxis, bool latchMotion = false, bool bypassHighPass = false);
+
 
 		SoftwareSerial *debug;
 
