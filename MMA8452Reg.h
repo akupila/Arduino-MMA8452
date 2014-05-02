@@ -34,7 +34,7 @@
 #define REG_PULSE_THSY			0x24	// Y pulse threshold
 #define REG_PULSE_THSZ			0x25	// Z pulse threshold
 #define REG_PULSE_TMLT			0x26	// Time limit for pulse
-#define REG_LTCY				0x27	// Latency time for 2nd pulse
+#define REG_PULSE_LTCY			0x27	// Latency time for 2nd pulse
 #define REG_PULSE_WIND			0x28	// Window time for 2nd pulse
 #define REG_ASLP_COUNT			0x29	// Counter setting for Auto-SLEEP
 #define REG_CTRL_REG1			0x2A	// Data Rate, ACTIVE Mode
