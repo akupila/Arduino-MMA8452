@@ -1,5 +1,4 @@
 # MMA8452Q accelerometer Arduino/AVR library
-======
 
 This library allows you to use the MMA8452Q accelerometer from Freescale, a kickass little device with a lot of features
 
