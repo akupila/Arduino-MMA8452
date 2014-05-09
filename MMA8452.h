@@ -1,11 +1,17 @@
 #ifndef MMA8452_H_
 #define MMA8452_H_
 
+#ifdef ARDUINO
 #include <Arduino.h>
 #include <Wire.h>
+#else
+#include <stdlib.h>
+#include <avr/io.h>
+#include "i2cmaster.h"
+#include <util/delay.h>
+#endif
 
 #include "MMA8452Reg.h"
-#include "SoftwareSerial.h"
 
 // I2C address set in hardware (tied high or low)
 #define SA0 0
@@ -84,6 +90,13 @@ typedef enum {
 	MMA_DATA_READY = 0x01
 } mma_interrupt_types_t;
 
+typedef enum {
+	MMA_X = 0x01,
+	MMA_Y = 0x02,
+	MMA_Z = 0x04,
+	MMA_ALL_AXIS = 0x07
+} mma_axis_t;
+
 class MMA8452
 {
 
@@ -97,35 +110,35 @@ class MMA8452
 		void getAcceleration(float *x, float *y, float *z);
 
 		mma8452_mode_t getMode();
-		void getInterruptEvent(bool *wakeStateChanged = NULL, bool *movementOccurred = NULL, bool *landscapePortrait = NULL, bool *pulseEvent = NULL, bool *freefall = NULL, bool *dataReady = NULL);
+		void getInterruptEvent(bool *wakeStateChanged = NULL, bool *transient = NULL, bool *landscapePortrait = NULL, bool *pulseEvent = NULL, bool *freefallMotion = NULL, bool *dataReady = NULL);
 
 		// todo: implement Pulse_LPF_EN
 		void setHighPassFilter(bool enabled, mma8452_highpass_mode_t mode = MMA_HP1);
-		bool getHighPassFilter(mma8452_highpass_mode_t *mode = NULL);
 
+		void enableOrientationChange(bool enabled, bool clearCounterWhenInvalid = true);
 		void getPortaitLandscapeStatus(bool *orientationChanged, bool *zTiltLockoutDetected, mma8452_orientation_t *orientation, bool *back);
+		bool isFlat();
 
 		void configureLandscapePortraitDetection(bool enableDetection, uint8_t debounceCount = 0, bool debounceTimeout = true);
-		void getLandscapePortraitConfig(bool *enabled, uint8_t *debounceCount, bool *debounceTimeout);
 
-		void setMotionDetectionMode(mma8452_motion_type_t motion, bool xAxis, bool yAxis, bool zAxis, bool latchMotion = false);
-		bool motionDetected(bool *x, bool *y, bool *z, bool *negativeX = NULL, bool *negativeY = NULL, bool *negativeZ = NULL);
+		void setMotionDetectionMode(mma8452_motion_type_t motion, uint8_t axis, bool latchMotion = false);
+		bool motionDetected(bool *x = NULL, bool *y = NULL, bool *z = NULL, bool *negativeX = NULL, bool *negativeY = NULL, bool *negativeZ = NULL);
 		// threshold: 8G/127
-		void setMotionTreshold(uint8_t threshold, uint8_t debounceCount = 0, bool resetDebounceOnNoMotion = 0);
+		void setMotionTreshold(uint8_t threshold, uint8_t debounceCount = 0, bool resetDebounceOnNoMotion = true);
 
-		void setTransientDetection(bool xAxis, bool yAxis, bool zAxis, bool latchMotion = false, bool bypassHighPass = false);
+		void setTransientDetection(uint8_t axis, bool latchMotion = false, bool bypassHighPass = false);
 		bool transientDetected(bool *x, bool *y, bool *z, bool *negativeX = NULL, bool *negativeY = NULL, bool *negativeZ = NULL);
 		// threshold: 8G/127
 		void setTransientTreshold(uint8_t threshold, uint8_t debounceCount = 0, bool resetDebounceOnNoMotion = 0);
 
-		void enableSingleTapDetector(bool xAxis, bool yAxis, bool zAxis);
-		void enableDoubleTapDetector(bool xAxis, bool yAxis, bool zAxis, uint8_t minDuration, uint8_t maxDuration, bool abortOnQuickDoubleTap);
-		bool tapDetected(bool *doubleTap, bool *x, bool *y, bool *z, bool *negativeX, bool *negativeY, bool *negativeZ);
+		void enableSingleTapDetector(uint8_t axis, bool latch = true);
+		void enableDoubleTapDetector(uint8_t axis, uint8_t minDuration, uint8_t maxDuration, bool latch = true, bool abortOnQuickDoubleTap = false);
+		bool getTapDetails(bool *singleTap, bool *doubleTap, bool *x, bool *y, bool *z, bool *negativeX = NULL, bool *negativeY = NULL, bool *negativeZ = NULL);
 		void setTapThreshold(uint8_t x, uint8_t y, uint8_t z);
 		void setMaxTapDuration(uint8_t maxDuration);
 
 		void setAutoSleep(bool enabled, uint8_t time, mma8452_sleep_frequency_t sleepFrequencySampling = MMA_SLEEP_1_56hz, mma_power_mode_t sleepPowerMode = MMA_LOW_POWER);
-		void setWakeOnInterrupt(bool transient, bool landscapePortraitChange, bool tap, bool freefall_motion);
+		void setWakeOnInterrupt(bool transient = true, bool landscapePortraitChange = true, bool tap = true, bool freefall_motion = true);
 
 		void setDataRate(mma_datarate_t dataRate);
 		void setLowNoiseMode(bool enabled);
@@ -136,7 +149,7 @@ class MMA8452
 		void setPowerMode(mma_power_mode_t powerMode);
 
 		void setInterruptsEnabled(uint8_t interruptMask);
-		void configureInterrrupts(bool activeHigh, bool openDrain);
+		void configureInterrupts(bool activeHigh, bool openDrain);
 		// true: pin1, false: pin2
 		void setInterruptPins(bool autoSleepWake, bool transient, bool landscapePortraitChange, bool tap, bool freefall_motion, bool dataReady);
 
@@ -145,17 +158,15 @@ class MMA8452
 
 		void setActive(bool active = true);
 
-		SoftwareSerial *debug;
-
 	private:
 		bool active;
 
 		mma8452_range_t range;
 
 		void standby(bool standby);
-		byte read(byte reg);
-		void readMultiple(byte reg, byte *buffer, uint8_t numBytes);
-		void write(byte reg, byte value);
+		uint8_t read(uint8_t reg);
+		void readMultiple(uint8_t reg, uint8_t *buffer, uint8_t numuint8_ts);
+		void write(uint8_t reg, uint8_t value);
 
 		bool singleTapEnabled;
 		bool doubleTapEnabled;
