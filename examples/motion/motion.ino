@@ -20,8 +20,11 @@ void setup()
 	{
 		serial.println(F("ok"));
 
-		accelerometer.setDataRate(MMA_100hz);
+		accelerometer.setDataRate(MMA_400hz);
 		accelerometer.setRange(MMA_RANGE_2G);
+
+		accelerometer.setMotionDetectionMode(MMA_MOTION, MMA_ALL_AXIS);
+		accelerometer.setMotionTreshold(0x11);
 	}
 	else
 	{
@@ -32,18 +35,10 @@ void setup()
 
 void loop()
 {
-	float x;
-	float y;
-	float z;
-
-	accelerometer.getAcceleration(&x, &y, &z);
-
-	serial.print(x, 5);
-	serial.print(F(" "));
-	serial.print(y, 5);
-	serial.print(F(" "));
-	serial.print(z, 5);
-	serial.println();
-
-	delay(10);
+	bool motion = accelerometer.motionDetected();
+	if (motion)
+	{
+		serial.print(F("Motion @ "));
+		serial.println(millis());
+	}
 }
