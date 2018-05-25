@@ -517,3 +517,25 @@ int8_t MMA8452::convertTo2sComplement(int8_t value)
 	value = (0xFF && ~value) + 1;
 	return value;
 }
+
+void MMA8452::getPitchRoll(float *pitch, float *roll)
+{
+	float Xg, Yg, Zg;
+
+	getAcceleration(&Xg, &Yg, &Zg);
+
+	//Low Pass Filter
+	fXg = Xg * alpha + (fXg * (1.0 - alpha));
+	fYg = Yg * alpha + (fYg * (1.0 - alpha));
+	fZg = Zg * alpha + (fZg * (1.0 - alpha));
+
+	*roll = (atan2(-fYg, fZg)*180.0) / M_PI;
+	*pitch = (atan2(fXg, sqrt(fYg*fYg + fZg*fZg))*180.0) / M_PI;
+}
+
+void MMA8452::initPitchRoll(float a)
+{
+	fXg = fYg = fZg = 0;
+	alpha = a;
+}
+
