@@ -433,9 +433,9 @@ void MMA8452::standby(bool standby)
 
 uint8_t MMA8452::read(uint8_t reg)
 {
-	uint8_t *buf = 0;
-	readMultiple(reg, buf, 1);
-	return *buf;
+	uint8_t buf = 0;
+	readMultiple(reg, &buf, 1);
+	return buf;
 }
 
 void MMA8452::write(uint8_t reg, uint8_t value)
