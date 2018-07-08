@@ -157,7 +157,9 @@ class MMA8452
 		void setOffsets(int8_t x, int8_t y, int8_t z);
 
 		void setActive(bool active = true);
-
+	
+		void getPitchRoll(float *pitch, float *roll);
+		void initPitchRoll(float alpha);
 	private:
 		bool active;
 
@@ -173,6 +175,8 @@ class MMA8452
 
 		float convertGCounts(uint16_t data);
 		int8_t convertTo2sComplement(int8_t value);
+	
+		float fXg, fYg, fZg, alpha;
 };
 
 #endif // MMA8452_H_
