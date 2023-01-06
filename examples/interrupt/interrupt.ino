@@ -31,7 +31,7 @@ void setup()
 		accelerometer.setDataRate(MMA_1_56hz);	// 800hz doesn't trigger an interrupt
 		accelerometer.setRange(MMA_RANGE_2G);
 		accelerometer.setInterruptsEnabled(MMA_DATA_READY);
-		accelerometer.configureInterrrupts(false, false);
+		accelerometer.configureInterrupts(false, false);
 		accelerometer.setInterruptPins(true, true, true, true, true, true);
 
 		attachInterrupt(0, accelerometerInterruptHandler, FALLING);
